@@ -1,0 +1,42 @@
+function buildTeam() {
+
+
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var key_talent = sheet.getRange(10,2).getValue();
+
+  var key_title = sheet.getRange(11,2).getValue();
+  var max_per_role = sheet.getRange(12,2).getValue();
+
+  
+  var fetch_url = "https://tgvrq6ny35.execute-api.us-east-1.amazonaws.com/prod/buildteam?key_talent="+key_talent+"&key_title="+key_title+"&max_per_role="+max_per_role;
+  
+  var response = UrlFetchApp.fetch(fetch_url);
+  
+  var team = response.getContentText();
+  workingteam = JSON.parse(team)
+ 
+  var howmanylines = workingteam.length;
+  var data = SpreadsheetApp.getActive().getRange('c20:f500').clearContent()
+  let i = 0;
+
+  sheet.getRange(15,4).setValue(workingteam['key_talent']);
+
+  var productionTeam = workingteam['team'];
+  var howmanylines = productionTeam.length;
+
+
+  while (i < howmanylines) {
+    whichrow = 20 + i;
+    sheet.getRange(whichrow,3).setValue(productionTeam[i]['role']);
+    sheet.getRange(whichrow,4).setValue(productionTeam[i]['name']);
+    sheet.getRange(whichrow,5).setValue(productionTeam[i]['titles']);
+    var linkbody = "https://www.imdb.com/name/"+productionTeam[i]['talentID']+"/";
+    var imdb_link = '=HYPERLINK("'+linkbody+'","View on IMDB")';
+    sheet.getRange(whichrow,6).setValue(imdb_link)
+    
+    i++;
+
+  }
+
+}
+     s
